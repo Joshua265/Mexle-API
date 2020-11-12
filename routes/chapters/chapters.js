@@ -4,7 +4,6 @@ const { jsonParser, urlencodedParser } = require("../../middlewares");
 const Chapter = require("../../models/Chapter");
 
 router.post("/create", jsonParser, async (req, res) => {
-  console.log(req.body);
   try {
     const chapter = new Chapter({
       title: req.body.title,
@@ -21,7 +20,6 @@ router.post("/create", jsonParser, async (req, res) => {
 });
 
 router.get("/:courseId", urlencodedParser, async (req, res) => {
-  console.log(req.params);
   try {
     const chapters = await Chapter.find({ courseId: req.params.courseId });
     res.status(200).json({ chapters });

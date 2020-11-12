@@ -36,11 +36,15 @@ mongoose.connect(
 const userRoute = require("./routes/user/user");
 const coursesRoute = require("./routes/courses/courses");
 const chaptersRoute = require("./routes/chapters/chapters");
+const stepsRoute = require("./routes/steps/steps");
+const imagesRoute = require("./routes/images/images");
 
 //use routes
 app.use("/user", userRoute);
 app.use("/courses", coursesRoute);
 app.use("/chapters", chaptersRoute);
+app.use("/steps", stepsRoute);
+app.use("/images", imagesRoute);
 
 //home route
 app.get("/", (req, res) => {
