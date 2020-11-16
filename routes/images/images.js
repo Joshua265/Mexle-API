@@ -25,11 +25,6 @@ router.get("/:url", urlencodedParser, async (req, res) => {
       _id: req.params.url,
     });
     return res.status(200).sendFile(image.path, { root: "." });
-    // fs.readFile(image.path, { encoding: "base64" }, function (err, imageData) {
-    //   if (err) throw err;
-    //   console.log("loaded");
-
-    // });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "some error occured" });
