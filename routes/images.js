@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const { jsonParser, urlencodedParser } = require("../../middlewares");
-const Image = require("../../models/image");
+const { jsonParser, urlencodedParser } = require("../middlewares");
+const Image = require("../models/image");
 
 function decodeBase64Image(dataString) {
   var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
@@ -35,7 +35,7 @@ router.post("/upload", jsonParser, async (req, res) => {
   try {
     //create filename
     // var imageTypeRegularExpression = /\/(.*?)$/;
-    const imageBuffer = decodeBase64Image(req.body.imageBinary);
+    const imageBuffer = decodeBase64Image(req.body.upload);
     // const imageTypeDetected = imageBuffer.type;
     // console.log(imageTypeDetected);
     path = `public/images/${Date.now()}-${Math.random() * 1000}.jpg`;

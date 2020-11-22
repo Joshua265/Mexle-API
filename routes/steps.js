@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const { jsonParser, urlencodedParser } = require("../../middlewares");
-const Step = require("../../models/Step");
+const { jsonParser, urlencodedParser } = require("../middlewares");
+const Step = require("../models/Step");
 
 router.post("/create", jsonParser, async (req, res) => {
   try {
@@ -9,6 +9,7 @@ router.post("/create", jsonParser, async (req, res) => {
       title: req.body.title,
       description: req.body.description,
       author: req.body.author,
+      visible: req.body.visible,
       chapterId: req.body.chapterId,
       metadata: req.body.metadata,
     });
@@ -33,6 +34,7 @@ router.post("/edit/:stepId", jsonParser, urlencodedParser, async (req, res) => {
     const update = {
       title: req.body.title,
       description: req.body.description,
+      visible: req.body.visible,
       chapterId: req.body.chapterId,
       metadata: req.body.metadata,
     };
@@ -43,6 +45,32 @@ router.post("/edit/:stepId", jsonParser, urlencodedParser, async (req, res) => {
     res.status(500).json({ message: err });
   }
 });
+
+router.post(
+  "/visible/:stepId",
+  jsonParser,
+  urlencodedParser,
+  async (req, res) => {
+    try {
+      //check if author matches user
+      const filter = { _id: req.params.stepId };
+      const step = await Step.findOne(filter);
+      if (step.author !== req.body.user) {
+        res.status(403).json({ message: "Unauthorized" });
+        return;
+      }
+      //update entry
+      const update = {
+        visible: req.body.visible,
+      };
+      await Step.findOneAndUpdate(filter, update);
+
+      res.sendStatus(204);
+    } catch (err) {
+      res.status(500).json({ message: err });
+    }
+  }
+);
 
 router.get("/chapterId/:chapterId", urlencodedParser, async (req, res) => {
   try {
@@ -57,6 +85,15 @@ router.get("/:stepId", urlencodedParser, async (req, res) => {
   try {
     const step = await Step.findOne({ _id: req.params.stepId });
     res.status(200).json(step);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+});
+
+router.get("/visible/:stepId", urlencodedParser, async (req, res) => {
+  try {
+    const step = await Step.findOne({ _id: req.params.stepId });
+    res.status(200).json(step.visible);
   } catch (err) {
     res.status(500).json({ message: err });
   }

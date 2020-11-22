@@ -33,11 +33,11 @@ mongoose.connect(
 );
 
 //import routes
-const userRoute = require("./routes/user/user");
-const coursesRoute = require("./routes/courses/courses");
-const chaptersRoute = require("./routes/chapters/chapters");
-const stepsRoute = require("./routes/steps/steps");
-const imagesRoute = require("./routes/images/images");
+const userRoute = require("./routes/user");
+const coursesRoute = require("./routes/courses");
+const chaptersRoute = require("./routes/chapters");
+const stepsRoute = require("./routes/steps");
+const imagesRoute = require("./routes/images");
 
 //use routes
 app.use("/user", userRoute);
