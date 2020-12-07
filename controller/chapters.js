@@ -1,13 +1,29 @@
 const Chapter = require("../models/Chapter");
+const Course = require("../models/Course");
+
+const checkCreatePermission = async (user, courseId) => {
+  if (user.role === "admin" || user.role === "creator") {
+    return true;
+  }
+  const course = await Course.findOne({ _id: courseId });
+  if (user.username === course.author) {
+    return true;
+  }
+  return false;
+};
 
 const createChapter = async (req, res) => {
   try {
+    if (!(await checkCreatePermission(req.user, req.body.courseId))) {
+      res.status(403).json({ message: "Unauthorized" });
+      return;
+    }
     const chapter = new Chapter({
       title: req.body.title,
       description: req.body.description,
       courseId: req.body.courseId,
       visible: req.body.visible,
-      author: req.body.author,
+      author: req.user.username,
       picture: req.body.picture || null,
     });
 
@@ -23,9 +39,11 @@ const editChapter = async (req, res) => {
     //check if author matches user
     const filter = { _id: req.params.chapterId };
     const chapter = await Chapter.findOne(filter);
-    if (chapter.author !== req.body.author) {
-      res.status(403).json({ message: "Unauthorized" });
-      return;
+    if (req.user.role !== "admin") {
+      if (chapter.author !== req.user.username) {
+        res.status(403).json({ message: "Unauthorized" });
+        return;
+      }
     }
     //update entry
     const update = {
@@ -42,7 +60,7 @@ const editChapter = async (req, res) => {
   }
 };
 
-const getCourseByCourseId = async (req, res) => {
+const getChapterByCourseId = async (req, res) => {
   try {
     const chapters = await Chapter.find({ courseId: req.params.courseId });
     res.status(200).json({ chapters });
@@ -51,7 +69,7 @@ const getCourseByCourseId = async (req, res) => {
   }
 };
 
-const getCourseByChapterId = async (req, res) => {
+const getChapterByChapterId = async (req, res) => {
   try {
     const chapter = await Chapter.find({ _id: req.params.chapterId });
     res.status(200).json({ chapter: chapter[0] });
@@ -60,7 +78,7 @@ const getCourseByChapterId = async (req, res) => {
   }
 };
 
-const getVisible = async (req, res) => {
+const getVisibility = async (req, res) => {
   try {
     const chapter = await Chapter.findOne({ _id: req.params.chapterId });
     res.status(200).json(chapter.visible);
@@ -72,7 +90,7 @@ const getVisible = async (req, res) => {
 module.exports = {
   createChapter,
   editChapter,
-  getCourseByCourseId,
-  getCourseByChapterId,
-  getVisible,
+  getChapterByCourseId,
+  getChapterByChapterId,
+  getVisibility,
 };

@@ -5,6 +5,7 @@ const UserSchema = mongoose.Schema({
   password: { type: String, required: true },
   email: { type: String, required: false },
   role: { type: String, default: "user" },
+  language: { type: String },
   finishedCourses: { type: Array, default: [] },
   finishedChapters: { type: Array, default: [] },
   finishedSteps: { type: Array, default: [] },

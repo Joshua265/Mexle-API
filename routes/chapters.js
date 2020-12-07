@@ -1,30 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const { jsonParser, urlencodedParser } = require("../middlewares");
+const {
+  jsonParser,
+  urlencodedParser,
+  authenticateJWT,
+} = require("../middlewares");
 const {
   createChapter,
   editChapter,
-  getCourseByCourseId,
-  getCourseByChapterId,
-  getVisible,
+  getChapterByCourseId,
+  getChapterByChapterId,
+  getVisibility,
 } = require("../controller/chapters");
 
-router.post("/create", jsonParser, async (req, res) => createChapter(req, res));
-
-router.post("/edit/:chapterId", jsonParser, urlencodedParser, (req, res) =>
-  editChapter(req, res)
+router.post("/create", jsonParser, authenticateJWT, async (req, res) =>
+  createChapter(req, res)
 );
 
-router.get("/courseId/:courseId", urlencodedParser, (req, res) =>
-  getCourseByCourseId(req, res)
+router.post(
+  "/edit/:chapterId",
+  jsonParser,
+  urlencodedParser,
+  authenticateJWT,
+  (req, res) => editChapter(req, res)
 );
 
-router.get("/:chapterId", urlencodedParser, async (req, res) =>
-  getCourseByChapterId(req, res)
+router.get(
+  "/courseId/:courseId",
+  urlencodedParser,
+  authenticateJWT,
+  (req, res) => getChapterByCourseId(req, res)
 );
 
-router.get("/visible/:chapterId", urlencodedParser, async (req, res) =>
-  getVisible(req, res)
+router.get("/:chapterId", urlencodedParser, authenticateJWT, async (req, res) =>
+  getChapterByChapterId(req, res)
+);
+
+router.get(
+  "/visible/:chapterId",
+  urlencodedParser,
+  authenticateJWT,
+  async (req, res) => getVisibility(req, res)
 );
 
 module.exports = router;

@@ -5,17 +5,18 @@ const mongoose = require("mongoose");
 
 require("dotenv/config");
 
-//localhost:3001
-app.listen(3001, () => {
-  console.log("Server is listening on port 3001...");
+//localhost:PORT
+app.listen(parseInt(process.env.PORT), () => {
+  console.log(`Server is listening on port ${process.env.PORT}...`);
 });
 
 // allow cors
+// only for local development
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   );
   next();
 });

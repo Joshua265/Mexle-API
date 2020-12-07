@@ -6,7 +6,7 @@ const StepSchema = mongoose.Schema({
   author: { type: String, required: true },
   visible: { type: Boolean, required: true },
   description: { type: String },
-  metadata: { type: Object },
+  content: { type: Object, required: true },
   createdAt: { type: Date, default: Date.now },
 });
 
