@@ -6,9 +6,6 @@ const UserSchema = mongoose.Schema({
   email: { type: String, required: false },
   role: { type: String, default: "user" },
   language: { type: String },
-  finishedCourses: { type: Array, default: [] },
-  finishedChapters: { type: Array, default: [] },
-  finishedSteps: { type: Array, default: [] },
   createdAt: { type: Date, default: Date.now },
 });
 
