@@ -111,6 +111,15 @@ const getVisibility = async (req, res) => {
   }
 };
 
+const getStepTitlesByIds = async (req, res) => {
+  try {
+    const steps = await Step.find({ _id: req.params.stepIds });
+    res.status(200).json(steps);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 module.exports = {
   createStep,
   editStep,
@@ -118,4 +127,5 @@ module.exports = {
   postVisibility,
   getVisibility,
   getStepById,
+  getStepTitlesByIds,
 };

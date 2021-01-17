@@ -12,6 +12,7 @@ const {
   getVisibility,
   getStepById,
   getStepsByChapterId,
+  getStepTitlesByIds
 } = require("../controller/steps");
 
 router.post("/create", jsonParser, authenticateJWT, async (req, res) => {
@@ -35,6 +36,15 @@ router.post(
   authenticateJWT,
   async (req, res) => {
     postVisibility(req, res);
+  }
+);
+
+router.get(
+  "/stepTitlesByIds/:stepId",
+  urlencodedParser,
+  authenticateJWT,
+  async (req, res) => {
+    getStepTitlesByIds(req, res);
   }
 );
 

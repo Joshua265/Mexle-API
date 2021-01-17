@@ -53,7 +53,7 @@ const editCourse = async (req, res) => {
 
 const postVisibility = async (req, res) => {
   try {
-    //check if author matches user
+    //check if user has permissions
     const filter = { _id: req.params.courseId };
     const course = await Course.findOne(filter);
     if (req.user.role !== "admin") {
@@ -75,6 +75,15 @@ const postVisibility = async (req, res) => {
   }
 };
 
+const getCourseInfo = async (req, res) => {
+  try {
+    const course = await Course.findOne({ _id: req.params.courseId });
+    res.status(200).json(course);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 const getVisibility = async (req, res) => {
   try {
     const course = await Course.findOne({ _id: req.params.courseId });
@@ -87,7 +96,7 @@ const getVisibility = async (req, res) => {
 const getCoursesByLanguage = async (req, res) => {
   try {
     let courses;
-    if (req.user.role === "admin") {
+    if (req.user && req.user.role === "admin") {
       courses = await Course.findAll({ language: req.params.language });
     } else {
       courses = await Course.findAll({
@@ -104,13 +113,20 @@ const getCoursesByLanguage = async (req, res) => {
 const getCourses = async (req, res) => {
   try {
     let courses;
-    if (req.user.role === "admin") {
-      courses = await Course.find();
-    } else {
-      courses = await Course.find({
-        $or: [{ visible: true }, { author: req.user.username }],
-      });
+    //if logged in
+    if (req.user) {
+      if (req.user.role === "admin") {
+        courses = await Course.find({});
+      } else {
+        courses = await Course.find({
+          $or: [{ visible: true }, { author: req.user.username }],
+        });
+      }
+    } //if not logged in
+    else {
+      courses = await Course.find({ visible: true });
     }
+
     res.status(200).json({ courses });
   } catch (err) {
     res.status(500).json({ message: err });
@@ -124,4 +140,5 @@ module.exports = {
   getVisibility,
   getCourses,
   getCoursesByLanguage,
+  getCourseInfo,
 };

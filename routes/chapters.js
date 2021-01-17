@@ -11,6 +11,7 @@ const {
   getChapterByCourseId,
   getChapterByChapterId,
   getVisibility,
+  postVisibility,
 } = require("../controller/chapters");
 
 router.post("/create", jsonParser, authenticateJWT, async (req, res) =>
@@ -41,6 +42,13 @@ router.get(
   urlencodedParser,
   authenticateJWT,
   async (req, res) => getVisibility(req, res)
+);
+
+router.post(
+  "/visible/:chapterId",
+  urlencodedParser,
+  authenticateJWT,
+  async (req, res) => postVisibility(req, res)
 );
 
 module.exports = router;

@@ -4,6 +4,7 @@ const {
   jsonParser,
   urlencodedParser,
   authenticateJWT,
+  parseJWT,
 } = require("../middlewares");
 const {
   createCourse,
@@ -12,6 +13,7 @@ const {
   getVisibility,
   getCourses,
   getCoursesByLanguage,
+  getCourseInfo,
 } = require("../controller/courses");
 
 //create course
@@ -51,15 +53,25 @@ router.get(
   }
 );
 
+//get course Info for chapter page
+router.get(
+  "/courseinfo/:courseId",
+  urlencodedParser,
+  authenticateJWT,
+  async (req, res) => {
+    getCourseInfo(req, res);
+  }
+);
+
 // /courses/
-//get all with language courses
-router.get("/", authenticateJWT, async (req, res) => {
+//get all courses
+router.get("/", parseJWT, async (req, res) => {
   getCourses(req, res);
 });
 
 // /courses/:language
-//get all with language courses
-router.get("/:language", authenticateJWT, async (req, res) => {
+//get all courses with certain language
+router.get("/:language", async (req, res) => {
   getCoursesByLanguage(req, res);
 });
 

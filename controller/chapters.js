@@ -87,10 +87,33 @@ const getVisibility = async (req, res) => {
   }
 };
 
+const postVisibility = async (req, res) => {
+  try {
+    //check if user is authorized
+    const filter = { _id: req.params.chapterId };
+    const chapter = await Chapter.findOne(filter);
+    if (req.user.role !== "admin") {
+      if (chapter.author !== req.body.user) {
+        res.status(403).json({ message: "Unauthorized" });
+        return;
+      }
+    }
+    //update entry
+    const update = {
+      visible: req.body.visible,
+    };
+    await Chapter.findOneAndUpdate(filter, update);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 module.exports = {
   createChapter,
   editChapter,
   getChapterByCourseId,
   getChapterByChapterId,
   getVisibility,
+  postVisibility,
 };

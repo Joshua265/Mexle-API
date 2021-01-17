@@ -1,6 +1,4 @@
-user progress
 ldap integration
-login and signup
 
 
 
@@ -8,25 +6,6 @@ bearbeiten und pruefen:
 Beim bearbeiten neuer Eintrag mit neuem Datum statt update für Historie
 der author kontrolliert alle Änderungen in seinem Kurs
 jeder user der creator ist, darf überall etwas hinzufügen oder bearbeiten, aber author muss änderungen zustimmen, ähnlich wie git pull request
-
-
-
-
-datenbank:
-courses:
-Sprache
-
-Lizenzangabe der eigenentwickelten Lerninhalte
-Verzeichnismanagement: Möglichkeit für Verzeichnisse, welche über einzelne Seiten hinaus gehen, z.B. für einen Namespace
-Abbildungsverzeichnis
-Tabellenverzeichnis
-Medienverzeichnis
-Formelverzeichnis
-Abkürzungsverzeichnis
-Aufgabenverzeichnis
-Literaturverzeichnis
-(Lizenzenverzeichnis für eingebundene Komponenten --> vermutlich in Lit.verz., Medienverz. und Abb.verz. integriert)
-
 
 
 steps:

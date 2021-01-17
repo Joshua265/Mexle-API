@@ -1,15 +1,13 @@
-/*
-
-currently not in use
-
-
-*/
-
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const { jsonParser, urlencodedParser } = require("../middlewares");
+const {
+  jsonParser,
+  urlencodedParser,
+  authenticateJWT,
+} = require("../middlewares");
 const Image = require("../models/image");
+require("dotenv/config");
 
 function decodeBase64Image(dataString) {
   var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
@@ -26,7 +24,7 @@ function decodeBase64Image(dataString) {
 }
 
 // /images
-router.get("/:url", urlencodedParser, async (req, res) => {
+router.get("/:url", urlencodedParser, authenticateJWT, async (req, res) => {
   try {
     let image = await Image.findOne({
       _id: req.params.url,
@@ -38,7 +36,7 @@ router.get("/:url", urlencodedParser, async (req, res) => {
   }
 });
 // /images/upload
-router.post("/upload", jsonParser, async (req, res) => {
+router.post("/upload", jsonParser, authenticateJWT, async (req, res) => {
   try {
     //create filename
     // var imageTypeRegularExpression = /\/(.*?)$/;
@@ -57,7 +55,7 @@ router.post("/upload", jsonParser, async (req, res) => {
     await image.save();
     return res.status(200).json({
       status: true,
-      response: { url: `http://localhost:3001/images/${image._id}` },
+      response: { url: `${process.env.API_URL}/images/${image._id}` },
     });
   } catch (error) {
     console.error(error);

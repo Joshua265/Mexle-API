@@ -3,8 +3,50 @@ const FinishedChapters = require("../models/FinishedChapters");
 const FinishedSteps = require("../models/FinishedSteps");
 const FinishedCourses = require("../models/FinishedCourses");
 const jwt = require("jsonwebtoken");
+const Course = require("../models/Course");
+const Chapter = require("../models/Chapter");
+const Step = require("../models/Step");
 
 require("dotenv/config");
+
+const createLoginData = async (res, userData) => {
+  if (userData.length === 0) {
+    res.status(400).json({ message: "Wrong Username or Password!" });
+    return;
+  }
+
+  const finishedCourses = await FinishedCourses.find({
+    userId: userData._id,
+  });
+
+  const finishedChapters = await FinishedChapters.find({
+    userId: userData._id,
+  });
+
+  const finishedSteps = await FinishedSteps.find({
+    userId: userData._id,
+  });
+
+  const token = jwt.sign(
+    { _id: userData._id, username: userData.username, role: userData.role },
+    process.env.accessTokenSecret,
+    { expiresIn: "4h" }
+  );
+
+  return {
+    token,
+    userData: {
+      username: userData.username,
+      role: userData.role,
+      email: userData.email,
+      avatar: userData.avatar,
+      language: userData.language,
+      finishedCourses: finishedCourses,
+      finishedChapters: finishedChapters,
+      finishedSteps: finishedSteps,
+    },
+  };
+};
 
 const login = async (req, res) => {
   try {
@@ -13,36 +55,21 @@ const login = async (req, res) => {
       password: req.body.password,
     };
     const userData = await User.findOne(user);
-    if (userData.length === 0) {
-      res.status(400).json({ message: "Wrong Username or Password!" });
-      return;
-    }
-    const token = jwt.sign(
-      { _id: userData._id, username: userData.username, role: userData.role },
-      process.env.accessTokenSecret,
-      { expiresIn: "4h" }
-    );
-    const finishedCourses = await FinishedCourses.find({
-      userId: userData._id,
-    });
+    const responseData = await createLoginData(res, userData);
+    res.status(200).json(responseData);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
 
-    const finishedChapters = await FinishedChapters.find({
-      userId: userData._id,
+const autoLogin = async (req, res) => {
+  try {
+    const userData = await User.findOne({
+      username: req.user.username,
+      _id: req.user._id,
     });
-
-    const finishedSteps = await FinishedSteps.find({
-      userId: userData._id,
-    });
-
-    res.status(200).json({
-      token,
-      userData: {
-        language: userData.language,
-        finishedCourses: finishedCourses,
-        finishedChapters: finishedChapters,
-        finishedSteps: finishedSteps,
-      },
-    });
+    const responseData = await createLoginData(res, userData);
+    res.status(200).json(responseData);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -86,7 +113,7 @@ const addFinished = async (req, res) => {
           courseId: req.body.finishedObject.id,
         });
         await finishedCourse.save();
-        res.sendStatus(204);
+        res.status(200).json({ obj: finishedCourse });
         return;
       }
       case "chapter": {
@@ -103,13 +130,11 @@ const addFinished = async (req, res) => {
           chapterId: req.body.finishedObject.id,
         });
         await finishedChapter.save();
-        res.status(204);
+        res.status(200).json({ obj: finishedChapter });
+
         return;
       }
       case "step": {
-        console.log(
-          await FinishedSteps.findOne({ stepId: req.body.finishedObject.id })
-        );
         if (
           await FinishedSteps.findOne({ stepId: req.body.finishedObject.id })
         ) {
@@ -121,7 +146,7 @@ const addFinished = async (req, res) => {
           stepId: req.body.finishedObject.id,
         });
         await finishedStep.save();
-        res.sendStatus(204);
+        res.status(200).json({ obj: finishedStep });
         return;
       }
       default: {
@@ -134,25 +159,98 @@ const addFinished = async (req, res) => {
   }
 };
 
-const autoLogin = async (req, res) => {
+const changeAvatar = async (req, res) => {
   try {
-    const userData = await User.findOne({ username: req.user.username });
-    if (userData.length === 0) {
-      res.status(400).json({ message: "Wrong Username or Password!" });
-      return;
-    }
-    const token = jwt.sign(
-      { username: userData.username, role: userData.role },
-      process.env.accessTokenSecret,
-      { expiresIn: "4h" }
-    );
-    res.status(200).json({
-      token,
-      userData,
-    });
+    //change path to avatar
+    filter = { username: req.body.username };
+    update = { avatar: req.body.avatarPath };
+    await User.findOneAndUpdate(filter, update);
+    res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ message: err });
   }
 };
 
-module.exports = { login, signUp, addFinished, autoLogin };
+const deleteAvatar = async (req, res) => {
+  try {
+    //delete path to avatar
+    filter = { username: req.body.username };
+    update = { avatar: undefined };
+    await User.findOneAndUpdate(filter, update);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+const getHistory = async (req, res) => {
+  try {
+    const finishedCourses = await FinishedCourses.find({
+      userId: req.user._id,
+    });
+
+    const finishedChapters = await FinishedChapters.find({
+      userId: req.user._id,
+    });
+
+    const finishedSteps = await FinishedSteps.find({
+      userId: req.user._id,
+    });
+
+    let data = [];
+
+    await Promise.all(
+      finishedCourses.map(async (item) => {
+        let name = "";
+        try {
+          name = await Course.findOne({ _id: item.courseId });
+          name = name.title;
+        } catch (err) {
+          name = "Unknown";
+        }
+        data.push({ time: item.createdAt, type: "course", name: name });
+      })
+    );
+
+    await Promise.all(
+      finishedChapters.map(async (item) => {
+        let name = "";
+        try {
+          name = await Chapter.findOne({ _id: item.chapterId });
+          name = name.title;
+        } catch (err) {
+          name = "Unknown";
+        }
+        data.push({ time: item.createdAt, type: "chapter", name: name });
+      })
+    );
+
+    await Promise.all(
+      finishedSteps.map(async (item) => {
+        let name = "";
+        try {
+          name = await Step.findOne({ _id: item.stepId });
+          name = name.title;
+        } catch (err) {
+          name = "Unknown";
+        }
+        data.push({ time: item.createdAt, type: "step", name: name });
+      })
+    );
+
+    // const sortedData = data.sort((a, b) => b.time - a.time);
+    res.status(200).json({ history: data.reverse() });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+module.exports = {
+  login,
+  signUp,
+  addFinished,
+  autoLogin,
+  changeAvatar,
+  deleteAvatar,
+  getHistory,
+};

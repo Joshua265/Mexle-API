@@ -2,6 +2,6 @@
 /public/images/*
 /node_modules
 
-.env
-.env.local
-.env.prod
+/.env
+/.env.local
+/.env.prod

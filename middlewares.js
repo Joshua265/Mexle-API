@@ -11,6 +11,24 @@ const jsonParser = bodyParser.json();
 // create application/x-www-form-urlencoded parser
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+//jwt parser
+const parseJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+
+    jwt.verify(token, process.env.accessTokenSecret, (err, user) => {
+      if (err) {
+        next();
+        return;
+      }
+      req.user = user;
+      next();
+    });
+  }
+};
+
 //verify jwt
 const authenticateJWT = (req, res, next) => {
   const authHeader = req.headers.authorization;
@@ -30,4 +48,4 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
-module.exports = { jsonParser, urlencodedParser, authenticateJWT };
+module.exports = { jsonParser, urlencodedParser, authenticateJWT, parseJWT };
