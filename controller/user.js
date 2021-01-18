@@ -131,7 +131,6 @@ const addFinished = async (req, res) => {
         });
         await finishedChapter.save();
         res.status(200).json({ obj: finishedChapter });
-
         return;
       }
       case "step": {
@@ -162,11 +161,12 @@ const addFinished = async (req, res) => {
 const changeAvatar = async (req, res) => {
   try {
     //change path to avatar
-    filter = { username: req.body.username };
-    update = { avatar: req.body.avatarPath };
-    await User.findOneAndUpdate(filter, update);
+    filter = { _id: req.user._id };
+    update = { $set: { avatar: req.body.avatar } };
+    await User.updateOne(filter, update);
     res.sendStatus(204);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: err });
   }
 };
@@ -174,9 +174,9 @@ const changeAvatar = async (req, res) => {
 const deleteAvatar = async (req, res) => {
   try {
     //delete path to avatar
-    filter = { username: req.body.username };
-    update = { avatar: undefined };
-    await User.findOneAndUpdate(filter, update);
+    filter = { _id: req.user._id };
+    update = { $set: { avatar: null } };
+    await User.update(filter, update);
     res.sendStatus(204);
   } catch (err) {
     res.status(500).json({ message: err });
