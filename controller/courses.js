@@ -9,7 +9,7 @@ const createCourse = async (req, res) => {
     const course = new Course({
       title: req.body.title,
       description: req.body.description,
-      author: req.user.username,
+      author: req.user._id,
       language: req.body.language,
       license: req.body.license,
       visible: req.body.visible,
@@ -43,7 +43,7 @@ const editCourse = async (req, res) => {
       license: req.body.license,
       picture: req.body.picture,
     };
-    await Course.findOneAndUpdate(filter, update);
+    await Course.updateOne(filter, update);
 
     res.sendStatus(204);
   } catch (err) {
@@ -57,7 +57,7 @@ const postVisibility = async (req, res) => {
     const filter = { _id: req.params.courseId };
     const course = await Course.findOne(filter);
     if (req.user.role !== "admin") {
-      if (course.author !== req.user.username) {
+      if (course.author !== req.user._id) {
         res.status(403).json({ message: "Unauthorized" });
         return;
       }
@@ -65,9 +65,9 @@ const postVisibility = async (req, res) => {
 
     //update entry
     const update = {
-      visible: req.body.visible,
+      $set: { visible: req.body.visible || !course.visible },
     };
-    await Course.findOneAndUpdate(filter, update);
+    await Course.updateOne(filter, update);
 
     res.sendStatus(204);
   } catch (err) {
@@ -97,9 +97,9 @@ const getCoursesByLanguage = async (req, res) => {
   try {
     let courses;
     if (req.user && req.user.role === "admin") {
-      courses = await Course.findAll({ language: req.params.language });
+      courses = await Course.find({ language: req.params.language });
     } else {
-      courses = await Course.findAll({
+      courses = await Course.find({
         language: req.params.language,
         visible: true,
       });
@@ -119,7 +119,7 @@ const getCourses = async (req, res) => {
         courses = await Course.find({});
       } else {
         courses = await Course.find({
-          $or: [{ visible: true }, { author: req.user.username }],
+          $or: [{ visible: true }, { author: req.user._id }],
         });
       }
     } //if not logged in
@@ -133,6 +133,63 @@ const getCourses = async (req, res) => {
   }
 };
 
+const getFilteredCourses = async (req, res) => {
+  try {
+    let filter = {
+      language: req.query.language,
+      title: { $regex: `.*${req.query.search}.*` },
+      visible: true,
+    };
+
+    //show invisible for certain users
+    if (req.user) {
+      if (req.user.role === "admin") {
+        filter = {
+          language: req.query.language,
+          title: { $regex: `.*${req.query.search}.*` },
+        };
+      } else {
+        filter = {
+          $or: [
+            {
+              language: req.query.language,
+              title: { $regex: `.*${req.query.search}.*` },
+              visible: true,
+            },
+            {
+              language: req.query.language,
+              title: { $regex: `.*${req.query.search}.*` },
+              author: req.user.id,
+            },
+          ],
+        };
+      }
+    }
+
+    //language all exception
+    if (req.query.language === "all") {
+      filter = { ...filter, language: { $regex: `.*.*` } };
+    }
+
+    const courses = await Course.find(filter);
+
+    res.status(200).json({ courses });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+const getCourseTitles = async (req, res) => {
+  try {
+    const courseTitle = await Course.findOne({
+      _id: req.params.id,
+    }).select("title -_id");
+    res.status(200).json(courseTitle.title);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 module.exports = {
   createCourse,
   editCourse,
@@ -141,4 +198,6 @@ module.exports = {
   getCourses,
   getCoursesByLanguage,
   getCourseInfo,
+  getCourseTitles,
+  getFilteredCourses,
 };

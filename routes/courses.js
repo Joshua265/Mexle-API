@@ -14,6 +14,8 @@ const {
   getCourses,
   getCoursesByLanguage,
   getCourseInfo,
+  getFilteredCourses,
+  getCourseTitles,
 } = require("../controller/courses");
 
 //create course
@@ -54,14 +56,9 @@ router.get(
 );
 
 //get course Info for chapter page
-router.get(
-  "/courseinfo/:courseId",
-  urlencodedParser,
-  authenticateJWT,
-  async (req, res) => {
-    getCourseInfo(req, res);
-  }
-);
+router.get("/courseinfo/:courseId", urlencodedParser, async (req, res) => {
+  getCourseInfo(req, res);
+});
 
 // /courses/
 //get all courses
@@ -69,10 +66,15 @@ router.get("/", parseJWT, async (req, res) => {
   getCourses(req, res);
 });
 
-// /courses/:language
+// /courses/filter
 //get all courses with certain language
-router.get("/:language", async (req, res) => {
-  getCoursesByLanguage(req, res);
+router.get("/filter", urlencodedParser, parseJWT, async (req, res) => {
+  getFilteredCourses(req, res);
 });
+
+// /courses/titles
+router.get("/titles/:id", urlencodedParser, async (req, res) =>
+  getCourseTitles(req, res)
+);
 
 module.exports = router;

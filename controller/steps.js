@@ -53,7 +53,7 @@ const editStep = async (req, res) => {
       chapterId: req.body.chapterId,
       content: req.body.content,
     };
-    await Step.findOneAndUpdate(filter, update);
+    await Step.updateOne(filter, update);
 
     res.sendStatus(204);
   } catch (err) {
@@ -74,9 +74,9 @@ const postVisibility = async (req, res) => {
     }
     //update entry
     const update = {
-      visible: req.body.visible,
+      $set: { visible: req.body.visible },
     };
-    await Step.findOneAndUpdate(filter, update);
+    await Step.updateOne(filter, update);
 
     res.sendStatus(204);
   } catch (err) {
@@ -111,10 +111,12 @@ const getVisibility = async (req, res) => {
   }
 };
 
-const getStepTitlesByIds = async (req, res) => {
+const getStepTitles = async (req, res) => {
   try {
-    const steps = await Step.find({ _id: req.params.stepIds });
-    res.status(200).json(steps);
+    const stepTitle = await Step.findOne({
+      _id: req.params.id,
+    }).select("title -_id");
+    res.status(200).json(stepTitle.title);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -127,5 +129,5 @@ module.exports = {
   postVisibility,
   getVisibility,
   getStepById,
-  getStepTitlesByIds,
+  getStepTitles,
 };

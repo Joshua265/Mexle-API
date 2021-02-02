@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { jsonParser, authenticateJWT } = require("../middlewares");
+const {
+  jsonParser,
+  authenticateJWT,
+  urlencodedParser,
+} = require("../middlewares");
 const {
   signUp,
   login,
@@ -9,6 +13,7 @@ const {
   changeAvatar,
   deleteAvatar,
   getHistory,
+  getUserInfo,
 } = require("../controller/user");
 
 // /user/login
@@ -46,6 +51,12 @@ router.post("/deleteavatar", jsonParser, authenticateJWT, async (req, res) =>
 // get user history
 router.get("/history", jsonParser, authenticateJWT, async (req, res) =>
   getHistory(req, res)
+);
+
+// /user/info
+// get username and avatar
+router.get("/info/:id", urlencodedParser, authenticateJWT, async (req, res) =>
+  getUserInfo(req, res)
 );
 
 module.exports = router;

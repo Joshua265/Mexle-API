@@ -12,6 +12,7 @@ const {
   getChapterByChapterId,
   getVisibility,
   postVisibility,
+  getChapterTitles,
 } = require("../controller/chapters");
 
 router.post("/create", jsonParser, authenticateJWT, async (req, res) =>
@@ -26,15 +27,16 @@ router.post(
   (req, res) => editChapter(req, res)
 );
 
-router.get(
-  "/courseId/:courseId",
-  urlencodedParser,
-  authenticateJWT,
-  (req, res) => getChapterByCourseId(req, res)
+router.get("/courseId/:courseId", urlencodedParser, (req, res) =>
+  getChapterByCourseId(req, res)
 );
 
-router.get("/:chapterId", urlencodedParser, authenticateJWT, async (req, res) =>
+router.get("/:chapterId", urlencodedParser, async (req, res) =>
   getChapterByChapterId(req, res)
+);
+
+router.get("/titles/:id", urlencodedParser, async (req, res) =>
+  getChapterTitles(req, res)
 );
 
 router.get(
@@ -47,6 +49,7 @@ router.get(
 router.post(
   "/visible/:chapterId",
   urlencodedParser,
+  jsonParser,
   authenticateJWT,
   async (req, res) => postVisibility(req, res)
 );

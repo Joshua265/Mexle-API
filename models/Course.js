@@ -4,6 +4,7 @@ const CourseSchema = mongoose.Schema({
   title: { type: String, required: true },
   author: { type: String, required: true },
   visible: { type: Boolean, required: true },
+  contributors: { type: Array, default: [] },
   license: { type: String },
   directorys: { type: Array },
   language: { type: String, required: true },

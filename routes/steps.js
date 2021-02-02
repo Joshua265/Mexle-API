@@ -12,7 +12,7 @@ const {
   getVisibility,
   getStepById,
   getStepsByChapterId,
-  getStepTitlesByIds
+  getStepTitles,
 } = require("../controller/steps");
 
 router.post("/create", jsonParser, authenticateJWT, async (req, res) => {
@@ -39,25 +39,15 @@ router.post(
   }
 );
 
-router.get(
-  "/stepTitlesByIds/:stepId",
-  urlencodedParser,
-  authenticateJWT,
-  async (req, res) => {
-    getStepTitlesByIds(req, res);
-  }
+router.get("/titles", urlencodedParser, async (req, res) =>
+  getStepTitles(req, res)
 );
 
-router.get(
-  "/chapterId/:chapterId",
-  urlencodedParser,
-  authenticateJWT,
-  async (req, res) => {
-    getStepsByChapterId(req, res);
-  }
-);
+router.get("/chapterId/:chapterId", urlencodedParser, async (req, res) => {
+  getStepsByChapterId(req, res);
+});
 
-router.get("/:stepId", urlencodedParser, authenticateJWT, async (req, res) => {
+router.get("/:stepId", urlencodedParser, async (req, res) => {
   getStepById(req, res);
 });
 

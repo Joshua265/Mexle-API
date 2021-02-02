@@ -52,7 +52,7 @@ const editChapter = async (req, res) => {
       visible: req.body.visible,
       picture: req.body.picture,
     };
-    await Chapter.findOneAndUpdate(filter, update);
+    await Chapter.updateOne(filter, update);
 
     res.sendStatus(204);
   } catch (err) {
@@ -93,17 +93,29 @@ const postVisibility = async (req, res) => {
     const filter = { _id: req.params.chapterId };
     const chapter = await Chapter.findOne(filter);
     if (req.user.role !== "admin") {
-      if (chapter.author !== req.body.user) {
+      if (chapter.author !== req.user._id) {
         res.status(403).json({ message: "Unauthorized" });
         return;
       }
     }
     //update entry
+    console.log(req.body.visible);
     const update = {
-      visible: req.body.visible,
+      $set: { visible: req.body.visible },
     };
-    await Chapter.findOneAndUpdate(filter, update);
+    await Chapter.updateOne(filter, update);
     res.sendStatus(204);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+const getChapterTitles = async (req, res) => {
+  try {
+    const chapterTitle = await Chapter.findOne({
+      _id: req.params.id,
+    }).select("title -_id");
+    res.status(200).json(chapterTitle.title);
   } catch (err) {
     res.status(500).json({ message: err });
   }
@@ -116,4 +128,5 @@ module.exports = {
   getChapterByChapterId,
   getVisibility,
   postVisibility,
+  getChapterTitles,
 };

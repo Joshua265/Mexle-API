@@ -22,7 +22,7 @@ app.use(function (req, res, next) {
 });
 
 //better logging
-app.use(morgan("short"));
+app.use(morgan("dev"));
 
 //connect to db
 mongoose.connect(

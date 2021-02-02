@@ -40,6 +40,8 @@ const createLoginData = async (res, userData) => {
       role: userData.role,
       email: userData.email,
       avatar: userData.avatar,
+      coins: userData.coins,
+      hhnAccount: userData.hhnAccount,
       language: userData.language,
       finishedCourses: finishedCourses,
       finishedChapters: finishedChapters,
@@ -183,6 +185,19 @@ const deleteAvatar = async (req, res) => {
   }
 };
 
+const getUserInfo = async (req, res) => {
+  try {
+    filter = { _id: req.body.id };
+
+    const user = await (await User.findOne(filter)).isSelected(
+      "username avatar -_id"
+    );
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
 const getHistory = async (req, res) => {
   try {
     const finishedCourses = await FinishedCourses.find({
@@ -253,4 +268,5 @@ module.exports = {
   changeAvatar,
   deleteAvatar,
   getHistory,
+  getUserInfo,
 };
