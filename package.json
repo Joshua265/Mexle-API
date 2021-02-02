@@ -4,7 +4,7 @@
   "description": "Api Server for the Mexle E-learning",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env CI=true react-scripts test --env=jsdom",
     "start": "node app.js"
   },
   "repository": {
