@@ -1,27 +1,22 @@
 pipeline {
     agent {
         docker {
-            image 'node:12.20.1-buster' 
-            args '-p 3000:3000' 
+            image 'node:12.20.1-buster'
+            args '-p 5000:5000'
         }
     }
     environment {
-        CI = 'true' 
+        CI = 'true'
     }
     stages {
-        stage('Install') { 
+        stage('Install') {
             steps {
-                sh 'npm install' 
+                sh 'npm install'
             }
         }
-        stage('Build') { 
+        stage('Deliver') {
             steps {
-                sh 'npm run build' 
-            }
-        }
-        stage('Deliver') { 
-            steps {
-                sh 'npm start' 
+                sh 'npm start'
             }
         }
     }
