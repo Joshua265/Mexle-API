@@ -6,7 +6,7 @@ const {
   urlencodedParser,
   authenticateJWT,
 } = require("../middlewares");
-const Image = require("../models/image");
+const Image = require("../models/Image");
 require("dotenv/config");
 
 function decodeBase64Image(dataString) {
