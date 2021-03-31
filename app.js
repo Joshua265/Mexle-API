@@ -2,7 +2,6 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-const cors = require("cors");
 
 require("dotenv/config");
 
@@ -12,10 +11,8 @@ app.listen(parseInt(process.env.PORT), () => {
 });
 
 // use cors
-app.use(cors());
-app.options("*", cors());
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", "https://kurse.mexle.org");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
