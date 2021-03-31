@@ -1,5 +1,0 @@
-apps:
-    - name: mexle-api
-      script: ./dist/index.js
-      exec_mode: cluster
-      instances: max
