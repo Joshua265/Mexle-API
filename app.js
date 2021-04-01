@@ -15,10 +15,13 @@ app.listen(parseInt(process.env.PORT || 5000), () => {
 const corsOptions = {
   origin: "https://kurse.mexle.org",
   optionsSuccessStatus: 200, // For legacy browser support
-  methods: "GET, OPTIONS, PUT",
+  methods: "GET, OPTIONS, PUT, POST",
 };
 
 app.use(cors(corsOptions));
+
+//allow OPTIONS on all resources
+app.options("*", cors());
 
 //better logging
 app.use(morgan("dev"));
