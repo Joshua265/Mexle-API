@@ -3,6 +3,7 @@ const app = express();
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const helmet = require("helmet");
 
 require("dotenv/config");
 
@@ -13,10 +14,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// enable pre-flight
-app.options("*", cors());
-app.get("*", cors());
-app.post("*", cors());
+//use helmet to disable x-frame header
+app.use(
+  helmet.frameguard({
+    action: "deny",
+  })
+);
 
 //better logging
 app.use(morgan("dev"));
