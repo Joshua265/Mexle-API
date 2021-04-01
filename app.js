@@ -6,24 +6,16 @@ const cors = require("cors");
 
 require("dotenv/config");
 
-//localhost:PORT
-app.listen(parseInt(process.env.PORT), () => {
-  console.log(`Server is listening on port ${process.env.PORT}...`);
+//listen on PORT
+app.listen(parseInt(process.env.PORT || 5000), () => {
+  console.log(`Server is listening on port ${process.env.PORT || 5000}...`);
 });
 
 // use cors
-app.use(function (req, res, next) {
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  );
-  next();
-});
-
 const corsOptions = {
   origin: "https://kurse.mexle.org",
   optionsSuccessStatus: 200, // For legacy browser support
-  methods: "GET,OPTIONS,PUT",
+  methods: "GET, OPTIONS, PUT",
 };
 
 app.use(cors(corsOptions));
@@ -57,5 +49,5 @@ app.use("/images", imagesRoute);
 //home route
 app.get("/", (req, res) => {
   console.log("Responding to root route");
-  res.send("<h1>Welcome to the Mexle API Server!</h1><br/>");
+  res.send("<h1>Welcome to the Mexle API Server!</h1>");
 });
