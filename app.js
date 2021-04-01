@@ -11,8 +11,12 @@ const corsOptions = {
   origin: "https://kurse.mexle.org",
   optionsSuccessStatus: 200, // For legacy browser support
 };
-
 app.use(cors(corsOptions));
+
+// enable pre-flight
+app.options("*", cors());
+app.get("*", cors());
+app.post("*", cors());
 
 //better logging
 app.use(morgan("dev"));
