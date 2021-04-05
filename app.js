@@ -8,23 +8,11 @@ const helmet = require('helmet');
 require('dotenv/config');
 
 // use cors
-// const corsOptions = {
-//   origin: 'https://kurse.mexle.org',
-//   optionsSuccessStatus: 200, // For legacy browser support
-//   allowedHeaders: [
-//     'Content-Type',
-//     'Authorization',
-//     'Access-Control-Allow-Headers',
-//     'Origin, X-Requested-With,Content-Type,Accept'
-//   ]
-// };
-// app.use(cors(corsOptions));
-
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', 'https://kurse.mexle.org');
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
   next();
 });
