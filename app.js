@@ -18,6 +18,9 @@ app.use(cors(corsOptions));
 //use helmet
 app.use(helmet());
 
+//set all content types to application/json
+app.use(res.setHeader('content-type', 'application/json'));
+
 //better logging
 app.use(morgan('dev'));
 
