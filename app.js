@@ -11,7 +11,12 @@ require('dotenv/config');
 const corsOptions = {
   origin: 'https://kurse.mexle.org',
   optionsSuccessStatus: 200, // For legacy browser support
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With,Content-Type,Accept'
+  ]
 };
 app.use(cors(corsOptions));
 
