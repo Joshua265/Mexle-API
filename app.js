@@ -13,8 +13,7 @@ app.use(function (req, res, next) {
   res.header('Content-Type', 'text/plain');
   res.header(
     'Access-Control-Allow-Headers',
-    'Access-Control-Allow-Origin',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    'Access-Control-Allow-Origin,Origin, X-Requested-With, Content-Type, Accept, Authorization'
   );
   next();
 });
