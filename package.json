@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "cross-env CI=true react-scripts test --env=jsdom",
-    "start": "node app.js",
-    "prod": "pm2 start"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",

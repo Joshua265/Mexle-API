@@ -18,4 +18,4 @@ COPY . ./
 EXPOSE 80
 
 # start app
-CMD ["npm", "run", "prod"]
+CMD [ "pm2-runtime", "start", "ecosystem.config.js"]
