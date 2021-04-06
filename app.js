@@ -9,7 +9,7 @@ require('dotenv/config');
 
 // use cors
 app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', 'https://kurse.mexle.org');
+  res.header('Access-Control-Allow-Origin', 'http://kurse.mexle.org');
   res.header('Content-Type', 'text/plain');
   res.header(
     'Access-Control-Allow-Headers',
