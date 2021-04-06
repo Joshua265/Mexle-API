@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/app'
+      - '/app/node_modules'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`api.mexle.org`)"
+      - "traefik.http.routers.api.entrypoints=web"
+    networks: 
+      - default
+      - mongo_net
+
+networks:
+  default:
+    external:
+      name: gateway
+  mongo_net:
+    driver: bridge

@@ -1,0 +1,8 @@
+/mongodb.bat
+/public/images/*
+/node_modules
+node_modules/
+
+/.env
+/.env.local
+/.env.prod

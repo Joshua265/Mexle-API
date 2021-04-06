@@ -1,0 +1,31 @@
+{
+  "name": "e-learning-api",
+  "version": "1.0.0",
+  "description": "Api Server for the Mexle E-learning",
+  "main": "app.js",
+  "scripts": {
+    "test": "cross-env CI=true react-scripts test --env=jsdom",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Joshua265/E-Learning-Api.git"
+  },
+  "author": "Joshua Hermann",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Joshua265/E-Learning-Api/issues"
+  },
+  "homepage": "https://github.com/Joshua265/E-Learning-Api#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.3",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2"
+  }
+}
