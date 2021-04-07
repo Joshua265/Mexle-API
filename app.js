@@ -24,16 +24,24 @@ app.use(helmet());
 app.use(morgan('dev'));
 
 //connect to db
+mongoose.Promise = global.Promise;
 mongoose
   .connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    user: process.env.DB_USER,
+    pass: process.env.DB_PWD
   })
-  .catch((error) => console.log('Connection to DB failed', error));
+  .then(() => {
+    console.log('successfully connected to the database');
+  })
+  .catch((err) => {
+    console.log('error connecting to the database');
+  });
 
 //db error listener
 mongoose.connection.on('error', (err) => {
-  console.log('Connection to DB failed', err);
+  console.log('Connection to DB interrupted');
 });
 
 //import routes
