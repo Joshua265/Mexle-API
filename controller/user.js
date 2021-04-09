@@ -8,6 +8,9 @@ const Chapter = require('../models/Chapter');
 const Step = require('../models/Step');
 const { sendConfirmationEmail } = require('../config/nodemailer');
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 require('dotenv/config');
 
 const createLoginData = async (res, userData) => {
@@ -58,12 +61,18 @@ const createLoginData = async (res, userData) => {
 const login = async (req, res) => {
   try {
     const user = {
-      username: req.body.username,
-      password: req.body.password
+      username: req.body.username
     };
     const userData = await User.findOne(user);
-    const responseData = await createLoginData(res, userData);
-    res.status(200).json(responseData);
+
+    const match = await bcrypt.compare(req.body.username, userData.password);
+
+    if (match) {
+      const responseData = await createLoginData(res, userData);
+      res.status(200).json(responseData);
+      return;
+    }
+    res.status(403).json({ message: 'Wrong Password!' });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: err });
@@ -99,10 +108,12 @@ const signUp = async (req, res) => {
       process.env.ACCESS_TOKEN_SECRET
     );
 
+    const password = await bcrypt.hash(req.body.password, saltRounds);
+
     const user = new User({
       username: req.body.username,
       email: req.body.email || '',
-      password: req.body.password,
+      password: password,
       confirmationCode: validationToken
     });
 
