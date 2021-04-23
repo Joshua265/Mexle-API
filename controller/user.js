@@ -7,11 +7,30 @@ const Course = require('../models/Course');
 const Chapter = require('../models/Chapter');
 const Step = require('../models/Step');
 const { sendConfirmationEmail } = require('../config/nodemailer');
-
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
 
 require('dotenv/config');
+
+const saltRounds = 10;
+
+//connect to ldap server
+var client = ldap.createClient({
+  url: process.env.LDAP_URL
+});
+
+/*use this to create connection*/
+function authenticateDN(username, password) {
+  /*bind use for authentication*/
+  client.bind(username, password, function (err) {
+    if (err) {
+      console.log('Error in new connetion ' + err);
+    } else {
+      /*if connection is success then go for any operation*/
+      console.log('Success');
+      modifyDN('ou=people,dc=hs-heilbronn,dc=de');
+    }
+  });
+}
 
 const createLoginData = async (res, userData) => {
   if (userData.length === 0) {
@@ -60,6 +79,19 @@ const createLoginData = async (res, userData) => {
 
 const login = async (req, res) => {
   try {
+    //LDAP
+    var opts = {
+      filter: `(&(uid=${req.body.username})(objectClass=posixAccount)(accountstatus=aktiv))`,
+      scope: 'sub',
+      attributes: ['sn']
+    };
+
+    const ldap_data = await client.search(
+      'ou=people,dc=hs-heilbronn,dc=de',
+      opts
+    );
+
+    //Non-LDAP
     const user = {
       username: req.body.username
     };
